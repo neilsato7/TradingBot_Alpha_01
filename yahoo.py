@@ -9,7 +9,7 @@ def get_ticker_info(ticker):
     return yf.Ticker(ticker).info
 
 
-def get_ticker_history(ticker, period="1d"):
+def get_ticker_history(ticker, period="3mo"):
     return yf.Ticker(ticker).history(period=period)
 
 
