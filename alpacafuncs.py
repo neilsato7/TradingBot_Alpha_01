@@ -8,6 +8,7 @@ from alpaca.data import (
     StockHistoricalDataClient,
     OptionHistoricalDataClient,
     StockLatestQuoteRequest,
+    OptionLatestQuoteRequest,
 )
 
 
@@ -58,10 +59,12 @@ class AlpacaTrader:
 
 
 # alpacatest = AlpacaTrader(account_type="real")
-# testresponse = alpacatest.get_quote("AAPL")
-# print(testresponse)
-# print(type(testresponse))
-# print(testresponse.ask_price)
+
+# # testresponse = alpacatest.get_quote("AAPL")
+# # print(testresponse)
+# # print(type(testresponse))
+# # print(testresponse.ask_price)
+
 
 # symbol='AAPL'
 # timestamp=datetime.datetime(2025, 1, 3, 20, 59, 59, 974248, tzinfo=TzInfo(UTC))
