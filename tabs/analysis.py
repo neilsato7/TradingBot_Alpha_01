@@ -46,3 +46,17 @@ def show(ticker, yahoo_ticker_info):
         </table>
         """
         st.markdown(volume_table_html, unsafe_allow_html=True)
+
+        # Create a bar chart of the volume for the last 30 days
+        volume_chart = (
+            alt.Chart(analysis.ticker_history.tail(30))
+            .mark_bar()
+            .encode(
+                x=alt.X("Date", axis=alt.Axis(format="%Y-%m-%d")),
+                y="Volume",
+            )
+            .properties(title="Volume for the last 30 days")
+        )
+        st.altair_chart(volume_chart, use_container_width=True)
+    else:
+        st.write("No volume data available for the last 30 days")
