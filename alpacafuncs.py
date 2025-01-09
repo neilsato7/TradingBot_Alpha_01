@@ -2,6 +2,7 @@ import requests
 import time
 import pandas as pd
 import os
+import pytz
 from dotenv import load_dotenv
 from alpaca.data import (
     CryptoHistoricalDataClient,
@@ -50,12 +51,21 @@ class AlpacaTrader:
     def get_quote(self, ticker: str):
         """Get the latest quote for a given ticker"""
         request = StockLatestQuoteRequest(symbol_or_symbols=ticker)
-        print(request)
+
         response = self.stock_client.get_stock_latest_quote(request)
-        print(response)
-        response = response.get(ticker)
-        print(response)
-        return response
+        quote = response[ticker]  # Get the Quote object for the ticker
+
+        # Convert timestamp to eastern time:
+        timestamp = quote.timestamp.astimezone(pytz.timezone("US/Eastern"))
+
+        # Convert Quote object to dictionary
+        return {
+            "ask_price": quote.ask_price,
+            "ask_size": quote.ask_size,
+            "bid_price": quote.bid_price,
+            "bid_size": quote.bid_size,
+            "timestamp": timestamp,
+        }
 
 
 # alpacatest = AlpacaTrader(account_type="real")

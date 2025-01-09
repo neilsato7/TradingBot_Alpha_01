@@ -2,10 +2,14 @@ import streamlit as st
 import yahoo
 import altair as alt
 import plotly.graph_objects as go
+from datetime import datetime
+import pytz
 
 
 def show(ticker, yahoo_ticker_info):
-    st.subheader(f"{ticker} - {yahoo_ticker_info.get('longName','')}")
+    st.subheader(
+        f"{ticker} - {yahoo_ticker_info.get('longName','')} ({yahoo_ticker_info.get('industry','')} / {yahoo_ticker_info.get('sector','')})"
+    )
     st.write(f"Market Cap: ${yahoo_ticker_info.get('marketCap', 0):,}")
     st.write(f"Float: {yahoo_ticker_info.get('floatShares', 0):,}")
     if yahoo_ticker_info.get("shortRatio", 0) > 0:
@@ -73,3 +77,25 @@ def show(ticker, yahoo_ticker_info):
 
     st.write("Full ticker info:")
     st.write(yahoo_ticker_info)
+
+    st.header("News:")
+    news = yahoo.get_news(ticker)
+    for news_item in news:
+        item = news_item.get("content", {})
+        st.subheader(item.get("title"))
+
+        pub_date = item.get("pubDate")
+        # convert pub_date from "2025-01-09T10:30:00Z" to datetime in eastern time
+        pub_date = datetime.strptime(pub_date, "%Y-%m-%dT%H:%M:%SZ")
+        pub_date = pub_date.astimezone(pytz.timezone("US/Eastern"))
+
+        st.write(pub_date)
+
+        st.write(item.get("summary"))
+
+        canonical_url = item.get("canonicalUrl", {})
+        news_url = canonical_url.get("url", "")
+        st.markdown(f"{news_url}")
+        st.divider()
+
+    st.write(news)  # todo: doesn't work
