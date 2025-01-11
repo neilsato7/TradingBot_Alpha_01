@@ -3,6 +3,7 @@ import time
 import pandas as pd
 import os
 import pytz
+import streamlit as st
 from dotenv import load_dotenv
 from alpaca.data import (
     CryptoHistoricalDataClient,
@@ -48,6 +49,13 @@ class AlpacaTrader:
     def get_alpaca_headers(self):
         return {"APCA-API-KEY-ID": self.api_key, "APCA-API-SECRET-KEY": self.api_secret}
 
+    #Share URL button
+    def generate_share_url():
+        base_url = "https://convalyticstradingbot.streamlit.app/"  #deployed app URL
+        params = f"?filter={st.session_state.selected_filter}"
+
+    return base_url + params
+    
     def get_quote(self, ticker: str):
         """Get the latest quote for a given ticker"""
         request = StockLatestQuoteRequest(symbol_or_symbols=ticker)
@@ -55,6 +63,14 @@ class AlpacaTrader:
         response = self.stock_client.get_stock_latest_quote(request)
         quote = response[ticker]  # Get the Quote object for the ticker
 
+        #get ticker for the Share buttong
+        st.session_state.selected_filter = ticker
+        
+        if st.button("Share"): 
+        # Generate share URL based on current state 
+            share_url = generate_share_url()
+            st.write(f"Share this link: {share_url}")
+      
         # Convert timestamp to eastern time:
         timestamp = quote.timestamp.astimezone(pytz.timezone("US/Eastern"))
 
@@ -66,6 +82,8 @@ class AlpacaTrader:
             "bid_size": quote.bid_size,
             "timestamp": timestamp,
         }
+
+   
 
 
 # alpacatest = AlpacaTrader(account_type="real")
