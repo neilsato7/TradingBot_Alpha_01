@@ -11,6 +11,8 @@ from alpaca.data import (
     StockLatestQuoteRequest,
     OptionLatestQuoteRequest,
 )
+from alpaca.trading import TradingClient
+from alpaca.trading.requests import GetAssetsRequest
 
 
 MAX_RETRIES = 3
@@ -31,6 +33,9 @@ class AlpacaTrader:
             self.api_secret = os.getenv("ALPACA_REAL_API_SECRET")
             self.api_base_url = "https://api.alpaca.markets"
             self.assets_endpoint = f"{self.api_base_url}/v2/assets"
+            self.trading_client = TradingClient(
+                self.api_key, self.api_secret, paper=False
+            )
 
         else:
             print("Paper account")
@@ -38,7 +43,9 @@ class AlpacaTrader:
             self.api_secret = os.getenv("ALPACA_PAPER_API_SECRET")
             self.api_base_url = "https://paper-api.alpaca.markets"
             self.assets_endpoint = f"{self.api_base_url}/v2/assets"
-
+            self.trading_client = TradingClient(
+                self.api_key, self.api_secret, paper=True
+            )
         self.headers = self.get_alpaca_headers()
 
         self.stock_client = StockHistoricalDataClient(self.api_key, self.api_secret)
@@ -47,6 +54,11 @@ class AlpacaTrader:
 
     def get_alpaca_headers(self):
         return {"APCA-API-KEY-ID": self.api_key, "APCA-API-SECRET-KEY": self.api_secret}
+
+    def get_account_info(self):
+        account = self.trading_client.get_account()
+
+        return account
 
     def get_quote(self, ticker: str):
         """Get the latest quote for a given ticker"""
@@ -69,7 +81,8 @@ class AlpacaTrader:
 
 
 # alpacatest = AlpacaTrader(account_type="real")
-
+# account_info = alpacatest.get_account_info()
+# print(account_info)
 # # testresponse = alpacatest.get_quote("AAPL")
 # # print(testresponse)
 # # print(type(testresponse))
