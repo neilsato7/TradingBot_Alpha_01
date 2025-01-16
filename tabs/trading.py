@@ -2,22 +2,14 @@ import streamlit as st
 import alpacafuncs
 
 
-def show(ticker):
+def show(ticker, yanalysis, account_type):
     st.write("Trading functionality coming soon...")
 
-    col1, col2 = st.columns(2)
-    with col1:
-        account_type = st.selectbox("Account Type", ["paper", "real"])
-    with col2:
-        # If account_type is real, show a warning
-        if account_type == "real":
-            st.warning("This is a real money account. Be careful!")
+    # If account_type is real, show a warning
+    if account_type == "real":
+        st.warning("This is a real money account. Be careful!")
 
     alpaca_trader = alpacafuncs.AlpacaTrader(account_type)
-    account_info = alpaca_trader.get_account_info()
-
-    if account_info:
-        st.write(account_info)
 
     if ticker:
         alpaca_ticker_info = alpaca_trader.get_quote(ticker)
@@ -37,5 +29,3 @@ def show(ticker):
         </table>
         """
         st.markdown(alpaca_price_table_html, unsafe_allow_html=True)
-
-    st.write(alpaca_ticker_info)

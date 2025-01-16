@@ -2,38 +2,25 @@ import yfinance as yf
 import json
 
 
-def get_ticker_data(ticker):
-    print(f"Getting {ticker} data")
-    return yf.Ticker(ticker)
-
-
-def get_ticker_info(ticker):
-    print(f"Getting {ticker} info")
-    return yf.Ticker(ticker).info
-
-
-def get_ticker_history(ticker, period="3mo"):
-    print(f"Getting {ticker} history for {period}")
-    ticker_history = yf.Ticker(ticker).history(period=period)
-    ticker_history = ticker_history.rename_axis("Date").reset_index()
-    # ticker_history["Date"] = ticker_history["Date"].dt.strftime("%Y-%m-%d")
-    return ticker_history
-
-
-def get_ticker_recommendations(ticker):
-    return yf.Ticker(ticker).recommendations
-
-
-def get_news(ticker):
-    return yf.Ticker(ticker).news
-
-
-####### ANALYSIS #######################################################
 class YahooAnalysis:
     def __init__(self, ticker):
         self.ticker = ticker
-        self.ticker_info = get_ticker_info(ticker)
-        self.ticker_history = get_ticker_history(ticker)
+        self.ticker_info = self.get_ticker_info()
+        self.ticker_history = self.get_ticker_history()
+
+    def get_ticker_info(self):
+        print(f"Getting {self.ticker} info")
+        return yf.Ticker(self.ticker).info
+
+    def get_ticker_history(self, period="3mo"):
+        print(f"Getting {self.ticker} history for {period}")
+        ticker_history = yf.Ticker(self.ticker).history(period=period)
+        ticker_history = ticker_history.rename_axis("Date").reset_index()
+        # ticker_history["Date"] = ticker_history["Date"].dt.strftime("%Y-%m-%d")
+        return ticker_history
+
+    def get_news(self):
+        return yf.Ticker(self.ticker).news
 
     def new_high_volume_scanner(self, range_days=30):
         # get the volume for the last range_days

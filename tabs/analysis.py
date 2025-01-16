@@ -1,16 +1,16 @@
 import streamlit as st
-import yahoo
+import yahoofuncs
 import altair as alt
 import plotly.graph_objects as go
 from datetime import datetime
 import pytz
 
 
-def show(ticker, yahoo_ticker_info):
+def show(ticker, yanalysis):
 
     if ticker:
-        analysis = yahoo.YahooAnalysis(ticker)
-        vol_scanner = analysis.new_high_volume_scanner(range_days=30)
+
+        vol_scanner = yanalysis.new_high_volume_scanner(range_days=30)
 
         # if vol_scanner is not None, show the volume scanner
         if vol_scanner is not None:
@@ -51,7 +51,7 @@ def show(ticker, yahoo_ticker_info):
 
             # Create a bar chart of the volume for the last 30 days
             volume_chart = (
-                alt.Chart(analysis.ticker_history.tail(30))
+                alt.Chart(yanalysis.ticker_history.tail(30))
                 .mark_bar()
                 .encode(
                     x=alt.X("Date", axis=alt.Axis(format="%Y-%m-%d")),

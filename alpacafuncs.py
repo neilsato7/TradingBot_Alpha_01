@@ -56,12 +56,14 @@ class AlpacaTrader:
         return {"APCA-API-KEY-ID": self.api_key, "APCA-API-SECRET-KEY": self.api_secret}
 
     def get_account_info(self):
+        print("Getting account info")
         account = self.trading_client.get_account()
 
         return account
 
     def get_quote(self, ticker: str):
         """Get the latest quote for a given ticker"""
+        print(f"Getting quote for {ticker}")
         request = StockLatestQuoteRequest(symbol_or_symbols=ticker)
 
         response = self.stock_client.get_stock_latest_quote(request)
