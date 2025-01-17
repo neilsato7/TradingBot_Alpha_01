@@ -7,15 +7,29 @@ import pytz
 
 
 def show(ticker, yahoo_ticker_info):
-    st.subheader(
+    st.subheader
+    (
         f"{ticker} - {yahoo_ticker_info.get('longName','')} ({yahoo_ticker_info.get('industry','')} / {yahoo_ticker_info.get('sector','')})"
     )
+    st.session_state.selected_filter = ticker 
+
     st.write(f"Market Cap: ${yahoo_ticker_info.get('marketCap', 0):,}")
+    
     st.write(f"Float: {yahoo_ticker_info.get('floatShares', 0):,}")
+    
     if yahoo_ticker_info.get("shortRatio", 0) > 0:
         st.write(
             f"Short Ratio: {yahoo_ticker_info.get('shortRatio', 0):.2f}  --- Short Percent of Float: {yahoo_ticker_info.get('shortPercentOfFloat', 0):.2%}"
         )
+    def generate_share_url():
+        base_url = "https://pittsburgh-trading-group-alpha.streamlit.app/"  # Replace with your deployed app URL
+        params = f"?filter={st.session_state.selected_filter}"
+        return base_url + params
+
+    if st.button("Share"): 
+    # Generate share URL based on current state 
+        share_url = generate_share_url() 
+        st.write(f"Share this link: {share_url}") 
 
     # Create table with stock price information
     price_table_html = f"""
