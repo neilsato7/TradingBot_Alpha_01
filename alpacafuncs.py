@@ -102,7 +102,9 @@ class AlpacaTrader:
         self, ticker: str, quantity: int, side: str, time_in_force: str = "gtc"
     ):
         """Prepares a market order to be submitted to the trading client"""
-
+        print(
+            f"Preparing market order for {ticker} with quantity {quantity} and side {side}"
+        )
         if side == "buy":
             side = OrderSide.BUY
         elif side == "sell":
@@ -128,9 +130,17 @@ class AlpacaTrader:
         return self.submitted_order
 
 
-# alpacatest = AlpacaTrader(account_type="real")
+# alpacatest = AlpacaTrader(account_type="paper")
 # account_info = alpacatest.get_account_info()
 # print(account_info)
+
+# market_order = alpacatest.market_order("AAPL", 15, "buy")
+# print(market_order)
+
+# submitted_order = alpacatest.submit_order()
+# print(submitted_order)
+
+
 # # testresponse = alpacatest.get_quote("AAPL")
 # # print(testresponse)
 # # print(type(testresponse))

@@ -1,6 +1,5 @@
 import streamlit as st
 import alpacafuncs
-import time
 
 
 def show(ticker, yanalysis, account_type):
@@ -37,34 +36,54 @@ def show(ticker, yanalysis, account_type):
         market_order = None
         submitted_order = ""
 
+        # Use session state to persist the market order data
+        if "market_order_data" not in st.session_state:
+            st.session_state.market_order_data = None
+        if "submitted_order" not in st.session_state:
+            st.session_state.submitted_order = None
+
         # Create a buy button
         if st.button(
             f"Buy {ticker} at market ask price: ${alpaca_ticker_info.get('ask_price', 0):,.2f}"
         ):
-            alpaca_trader.market_order(
-                ticker, order_quantity, "buy", time_in_force="gtc"
-            )
-            st.write(alpaca_trader.market_order_data)
-            time.sleep(5)
+            try:
+                order_quantity = int(order_quantity)  # Convert string to integer
+                market_order = alpaca_trader.market_order(
+                    ticker, order_quantity, "buy", time_in_force="gtc"
+                )
+                st.session_state.market_order_data = market_order
+                st.write("Market order prepared:", market_order)
+            except ValueError:
+                st.error("Please enter a valid number for quantity")
 
         # Create a sell button
         if st.button(
             f"Sell {ticker} at bid price: ${alpaca_ticker_info.get('bid_price', 0):,.2f}"
         ):
-            alpaca_trader.market_order(
-                ticker, order_quantity, "sell", time_in_force="gtc"
-            )
-            st.write(alpaca_trader.market_order_data)
-            time.sleep(5)
+            try:
+                order_quantity = int(order_quantity)  # Convert string to integer
+                market_order = alpaca_trader.market_order(
+                    ticker, order_quantity, "sell", time_in_force="gtc"
+                )
+                st.session_state.market_order_data = market_order
+                st.write("Market order prepared:", market_order)
+            except ValueError:
+                st.error("Please enter a valid number for quantity")
 
-        # TODO: Submitting the order is not working. *Only tested after hours, maybe that's the issue?
-        # if alpaca_trader.market_order_data:
-        #     # Create a submit button
-        #     if st.button("Submit Order"):
-        #         alpaca_trader.submit_order()
-        #         time.sleep(5)
+        # Show submit button if we have market order data
+        if st.session_state.market_order_data and not st.session_state.submitted_order:
+            if st.button("Submit Order"):
+                # Set the market_order_data in the trader instance before submitting
+                alpaca_trader.market_order_data = st.session_state.market_order_data
+                st.session_state.submitted_order = alpaca_trader.submit_order()
+                st.write("Order submitted:", st.session_state.submitted_order)
 
-        # st.write(alpaca_trader.submitted_order)
+        # Add a reset button
+        if st.button("Reset Order"):
+            st.session_state.market_order_data = None
+            st.session_state.submitted_order = None
+
+        st.write(alpaca_trader.submitted_order)
 
         # Get asset info
         asset_info = alpaca_trader.get_asset(ticker)
